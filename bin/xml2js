@@ -3,50 +3,77 @@
 var byline = require("byline");
 var xml2js = require("xml2js");
 
-// create parser
-var parser = new xml2js.Parser({
-	explicitArray : false
-});
+cli();
 
-// read input stream
-var input = [];
+function cli() {
+    var args = process.argv.slice(2);
+    if (args.length) {
+        _printHelp();
+        return /*undefined*/;
+    }
+    _handleInput();
+}
 
-var stream = byline(process.stdin/*,{keepEmptyLines:true}*/);
-stream.on("data", function(line) {
-	input.push(line + "");
-}).on("end", function() {
-	processInput(input.join("\n"));
-});
+function _handleInput() {
+    var stream = byline(process.stdin/*,{keepEmptyLines:true}*/);
+    // read input stream
+    var input = [];
+
+    stream.on("data", function(line) {
+        input.push(line + "");
+    }).on("end", function() {
+        processInput(input.join("\n"));
+    });
+
+}
 
 function formatOutput(obj) {
-	obj = _format(obj);
+    obj = _format(obj);
 
-	if (obj.root) {
-		return obj.root;
-	}
-	return obj;
+    if (obj.root) {
+        return obj.root;
+    }
+    return obj;
 }
 
 function _format(obj) {
-	var m;
-	for (m in obj) {
-		if (obj.hasOwnProperty(m)) {
-			if (m == "_item") {
-				obj = obj[m];
-			} else if (typeof obj[m] == "object") {
-				obj[m] = _format(obj[m]);
-			}
-		}
-	}
-	return obj;
+    var m;
+    for (m in obj) {
+        if (obj.hasOwnProperty(m)) {
+            if (m == "_item") {
+                obj = obj[m];
+            } else if (typeof obj[m] == "object") {
+                obj[m] = _format(obj[m]);
+            }
+        }
+    }
+    return obj;
 }
 
 function processInput(xmlString) {
-	parser.parseString(xmlString, function(err, jsonObj) {
-		if (err) {
-			throw err;
-		}
-		var output = formatOutput(jsonObj);
-		console.log(JSON.stringify(output, null, " "));
-	});
+    // create parser
+    var parser = new xml2js.Parser({
+        explicitArray: false
+    });
+
+    parser.parseString(xmlString, function(err, jsonObj) {
+        if (err) {
+            throw err;
+        }
+        var output = formatOutput(jsonObj);
+        console.log(JSON.stringify(output, null, " "));
+    });
+}
+
+function _printHelp() {
+    var helpText = "Usage:\n" + //
+        "xml2js [-h\n" + //
+        "options:\n" + //
+        "\t-h print this help (alias --help)\n" + //
+        "\n" + //
+        "Sample:\n" + //
+        "echo '<a>hello</a>' | xml2js\n" + //
+        "echo '<root><a>hello</a></root>' | xml2js   (will print the same result, root element is ignored)\n"
+
+    console.log(helpText);
 }
