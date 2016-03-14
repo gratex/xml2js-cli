@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+
+var byline = require("byline");
+var xml2js = require("xml2js");
+
+// create parser
+var parser = new xml2js.Parser({
+	explicitArray : false
+});
+
+// read input stream
+var input = [];
+
+var stream = byline(process.stdin/*,{keepEmptyLines:true}*/);
+stream.on("data", function(line) {
+	input.push(line + "");
+}).on("end", function() {
+	processInput(input.join("\n"));
+});
+
+function formatOutput(obj) {
+	obj = _format(obj);
+
+	if (obj.root) {
+		return obj.root;
+	}
+	return obj;
+}
+
+function _format(obj) {
+	var m;
+	for (m in obj) {
+		if (obj.hasOwnProperty(m)) {
+			if (m == "_item") {
+				obj = obj[m];
+			} else if (typeof obj[m] == "object") {
+				obj[m] = _format(obj[m]);
+			}
+		}
+	}
+	return obj;
+}
+
+function processInput(xmlString) {
+	parser.parseString(xmlString, function(err, jsonObj) {
+		if (err) {
+			throw err;
+		}
+		var output = formatOutput(jsonObj);
+		console.log(JSON.stringify(output, null, " "));
+	});
+}

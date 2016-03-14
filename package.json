@@ -1,0 +1,30 @@
+{
+  "name": "xml2js-cli",
+  "version" : "1.0.0",
+  "description": "Simple XML to JavaScript object converter cli verision, builded on Leonidas-from-XIV/node-xml2js",
+  "keywords": [
+    "xml",
+    "json",
+    "cli"
+  ],
+  "homepage": "https://github.com/Leonidas-from-XIV/node-xml2js",
+  "moduleType": [
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gratex/xml2js-cli.git"
+  },
+  "bin": {
+    "xml2js": "./bin/xml2js"
+  },
+  "dependencies": {
+    "byline": "^4.2.1",
+    "xml2js": "^0.4.16"
+  },
+  "ignore": [
+    "node_modules"
+  ],
+  "private": false,
+  "license": "MIT"
+}
