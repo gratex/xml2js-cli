@@ -68,15 +68,18 @@ function processInput(xmlString, options) {
 }
 
 function _printHelp() {
-  var helpText = "Usage:\n" + //
-    "xml2js [-h\n" + //
-    "options:\n" + //
-    "\t-h print this help (alias --help)\n" + //
-    "\n" + //
-    "Sample:\n" + //
-    "echo '<a>hello</a>' | xml2js\n" + //
-    "echo '<root><a>hello</a></root>' | xml2js   (will print the same result, root element is ignored)\n" + //
-    "echo '<a>      hello       </a>' | xml2js  '{\"normalize\":true}'\n"
+  const helpText = `
+Version: 2.0
+Usage:
+        xml2js -h   # -h print this help (alias --help)
+        xml2js [options] (see https://www.npmjs.com/package/xml2js)
 
+Samples:
+
+    echo '<a>hello</a>' | xml2js
+    echo '<root><a>hello</a></root>' | xml2js   (will print the same result, root element is ignored)
+    echo '<a>      hello       </a>' | xml2js  '{"normalize":true}'
+`;
+  
   console.log(helpText);
 }
