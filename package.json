@@ -1,7 +1,7 @@
 {
   "name": "xml2js-cli",
-  "version" : "1.0.0",
-  "description": "Simple XML to JavaScript object converter cli verision, builded on Leonidas-from-XIV/node-xml2js",
+  "version" : "2.0.0",
+  "description": "Simple XML to JavaScript object converter cli verision, using on Leonidas-from-XIV/node-xml2js",
   "keywords": [
     "xml",
     "json",
@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "byline": "^4.2.1",
-    "xml2js": "^0.4.16"
+    "xml2js": "^0.6.2"
   },
   "ignore": [
     "node_modules"

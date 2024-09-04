@@ -1,79 +1,82 @@
 #!/usr/bin/env node
 
-var byline = require("byline");
-var xml2js = require("xml2js");
+const byline = require("byline");
+const xml2js = require("xml2js");
 
 cli();
 
 function cli() {
-    var args = process.argv.slice(2);
-    if (args.length) {
-        _printHelp();
-        return /*undefined*/;
-    }
-    _handleInput();
+  const args = process.argv.slice(2);
+  if (args[0] === '-h' || args[0] === '--help') {
+    _printHelp();
+    return /*undefined*/;
+  }
+  const options = args[0] ? JSON.parse(args[0]) : null;
+  _handleInput(options);
 }
 
-function _handleInput() {
-    var stream = byline(process.stdin/*,{keepEmptyLines:true}*/);
-    // read input stream
-    var input = [];
+function _handleInput(options) {
+  var stream = byline(process.stdin /*,{keepEmptyLines:true}*/ );
+  // read input stream
+  var input = [];
 
-    stream.on("data", function(line) {
-        input.push(line + "");
-    }).on("end", function() {
-        processInput(input.join("\n"));
-    });
+  stream.on("data", function(line) {
+    input.push(line + "");
+  }).on("end", function() {
+    processInput(input.join("\n"), options);
+  });
 
 }
 
 function formatOutput(obj) {
-    obj = _format(obj);
+  obj = _format(obj);
 
-    if (obj.root) {
-        return obj.root;
-    }
-    return obj;
+  if (obj.root) {
+    return obj.root;
+  }
+  return obj;
 }
 
 function _format(obj) {
-    var m;
-    for (m in obj) {
-        if (obj.hasOwnProperty(m)) {
-            if (m == "_item") {
-                obj = obj[m];
-            } else if (typeof obj[m] == "object") {
-                obj[m] = _format(obj[m]);
-            }
-        }
+  var m;
+  for (m in obj) {
+    if (obj.hasOwnProperty(m)) {
+      if (m == "_item") {
+        obj = obj[m];
+      } else if (typeof obj[m] == "object") {
+        obj[m] = _format(obj[m]);
+      }
     }
-    return obj;
+  }
+  return obj;
 }
 
-function processInput(xmlString) {
-    // create parser
-    var parser = new xml2js.Parser({
-        explicitArray: false
-    });
+function processInput(xmlString, options) {
+  // create parser
+  const parserOptions = Object.assign({
+    explicitArray: false
+  }, options);
+  const parser = new xml2js.Parser(parserOptions);
 
-    parser.parseString(xmlString, function(err, jsonObj) {
-        if (err) {
-            throw err;
-        }
-        var output = formatOutput(jsonObj);
-        console.log(JSON.stringify(output, null, " "));
-    });
+  parser.parseString(xmlString, function(err, jsonObj) {
+    if (err) {
+      throw err;
+    }
+    const output = formatOutput(jsonObj);
+    console.log(JSON.stringify(output, null, " "));
+  });
 }
 
 function _printHelp() {
-    var helpText = "Usage:\n" + //
-        "xml2js [-h\n" + //
-        "options:\n" + //
-        "\t-h print this help (alias --help)\n" + //
-        "\n" + //
-        "Sample:\n" + //
-        "echo '<a>hello</a>' | xml2js\n" + //
-        "echo '<root><a>hello</a></root>' | xml2js   (will print the same result, root element is ignored)\n"
+  var helpText = "Usage:\n" + //
+    "xml2js [-h\n" + //
+    "options:\n" + //
+    "\t-h print this help (alias --help)\n" + //
+    "\n" + //
+    "Sample:\n" + //
+    "echo '<a>hello</a>' | xml2js\n" + //
+    "echo '<root><a>hello</a></root>' | xml2js   (will print the same result, root element is ignored)\n" + //
+    "echo '<a>      hello       </a>' | xml2js  '{\"normalize\":true}'\n"
 
-    console.log(helpText);
+  console.log(helpText);
 }
