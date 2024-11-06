@@ -24,3 +24,18 @@ echo '<a><nested>Hello</nested><b>world</b></a>' | xml2js
  }
 }
 ````
+
+### xml2js-stream 
+
+        $ echo '
+        <a>hello</a>
+        <a>hello2   </a>
+        ' | ../xml2js-cli/bin/xml2js-stream '{"normalize":true}' | jsontool -g
+        [
+          {
+            "a": "hello"
+          },
+          {
+            "a": "hello2"
+          }
+        ]

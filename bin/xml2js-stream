@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+
+// quick version capable to process line-by line as xmls
+// as oposit to xml2js where all input (all lines) is considered XML
+
+// samples:
+// echo '<a>hello</a>
+// <a>hello2</a>' | ../xml2js-cli/bin/xml2js-stream | jsontool -g
+// [
+//   {
+//     "a": "hello"
+//   },
+//   {
+//     "a": "hello2"
+//   }
+// ]
+
+// echo '<a>hello</a>
+// <a>hello2   </a>' | ../xml2js-cli/bin/xml2js-stream '{"normalize":true}' | jsontool -g
+
+// TODO: popozerat dalsie magie co su v 
+const args = process.argv.slice(2);
+const options = args[0] ? JSON.parse(args[0]) : null;
+
+const xml2js = require("xml2js");
+const readline = require("readline");
+
+const parserOptions = Object.assign({
+  explicitArray: false
+}, options);
+const parser = new xml2js.Parser(parserOptions);
+
+readline.createInterface({ input: process.stdin })
+  .on('line', (line) => {
+    parser.parseString(line, function(err, jsonObj) {
+      if (err) throw err;
+      if (!line.trim().length) return;
+      
+      const output = jsonObj; //formatOutput(jsonObj);
+      console.log(JSON.stringify(output));
+    });
+  })
+  .once('close', () => {
+
+  });

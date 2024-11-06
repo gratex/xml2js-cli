@@ -16,7 +16,8 @@
     "url": "https://github.com/gratex/xml2js-cli.git"
   },
   "bin": {
-    "xml2js": "./bin/xml2js"
+    "xml2js": "./bin/xml2js",
+    "xml2js-stream": "./bin/xml2js-stream"
   },
   "dependencies": {
     "byline": "^4.2.1",
